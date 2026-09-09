@@ -4,6 +4,8 @@ import { Play, Pause, StepForward, RotateCcw, ArrowRight } from 'lucide-react';
 import { Choice } from './Choice';
 import { ALGORITHMS, ALGORITHM_LABELS } from '../algorithms/bandit';
 import { PRESETS, type TargetId } from '../circuit/booleanFunctions';
+import { CONTEXT_LABELS, CONTEXT_MODES } from '../circuit/features';
+import { REWARD_LABELS, REWARD_MODES } from '../simulation/reward';
 import type { SimulationConfig } from '../simulation/simulator';
 export type Speed = '1' | '5' | '20' | 'max';
 interface Props {
@@ -13,6 +15,7 @@ interface Props {
   running: boolean;
   speed: Speed;
   iteration: number;
+  onPreset: (target: TargetId, alpha: number) => void;
   onConfig: (config: SimulationConfig) => void;
   onTarget: (id: TargetId, custom?: string) => void;
   onRunning: (running: boolean) => void;
@@ -89,20 +92,129 @@ export function ControlPanel(p: Props) {
             </span>
           )}
         </form>
-        <div className="penalty-field">
-          <span className="eyebrow">COMPLEXITY PENALTY</span>
-          <label>
+        <Choice
+          id="reward"
+          label="CANDIDATE REWARD"
+          value={p.config.rewardMode}
+          options={REWARD_MODES.map((value) => ({
+            value,
+            label: REWARD_LABELS[value],
+          }))}
+          onChange={(rewardMode) => p.onConfig({ ...p.config, rewardMode })}
+        />
+      </section>
+      <div className="preset-row">
+        <span className="eyebrow">LOAD PRESET</span>
+        {(
+          [
+            { label: 'EASY', target: 'and', alpha: 0.5 },
+            { label: 'MEDIUM', target: 'xor-and', alpha: 0.5 },
+            { label: 'HARD', target: 'majority', alpha: 0.5 },
+            { label: 'EXPLORE / α 2', target: p.target, alpha: 2 },
+            { label: 'EXPLOIT / α .05', target: p.target, alpha: 0.05 },
+          ] as const
+        ).map((preset) => (
+          <button
+            key={preset.label}
+            onClick={() => p.onPreset(preset.target, preset.alpha)}
+          >
+            {preset.label}
+          </button>
+        ))}
+      </div>
+      <details className="advanced-settings">
+        <summary>
+          MODEL & SEARCH SETTINGS <span>Changes restart the experiment</span>
+        </summary>
+        <div className="advanced-grid">
+          <Choice
+            id="context"
+            label="CONTEXT FEATURES"
+            value={p.config.contextMode}
+            options={CONTEXT_MODES.map((value) => ({
+              value,
+              label: CONTEXT_LABELS[value],
+            }))}
+            onChange={(contextMode) => p.onConfig({ ...p.config, contextMode })}
+          />
+          <Choice
+            id="alpha"
+            label="EXPLORATION α / LINEAR"
+            value={String(p.config.alpha)}
+            options={[0, 0.05, 0.1, 0.5, 1, 2, 5].map((v) => ({
+              value: String(v),
+              label: String(v),
+            }))}
+            onChange={(value) =>
+              p.onConfig({ ...p.config, alpha: Number(value) })
+            }
+          />
+          <Choice
+            id="ridge"
+            label="RIDGE / INITIAL A"
+            value={String(p.config.ridge)}
+            options={[0.01, 0.1, 1, 10, 100].map((v) => ({
+              value: String(v),
+              label: `${v} × I`,
+            }))}
+            onChange={(value) =>
+              p.onConfig({ ...p.config, ridge: Number(value) })
+            }
+          />
+          <Choice
+            id="penalty"
+            label="COMPLEXITY PENALTY λ"
+            value={String(p.config.penalty)}
+            options={[0, 0.005, 0.01, 0.025, 0.05, 0.1, 0.2].map((v) => ({
+              value: String(v),
+              label: String(v),
+            }))}
+            onChange={(value) =>
+              p.onConfig({ ...p.config, penalty: Number(value) })
+            }
+            disabled={p.config.rewardMode !== 'complexity'}
+          />
+          <Choice
+            id="depth-weight"
+            label="DEPTH WEIGHT β"
+            value={String(p.config.depthWeight)}
+            options={[0, 0.25, 0.5, 1, 2].map((v) => ({
+              value: String(v),
+              label: String(v),
+            }))}
+            onChange={(value) =>
+              p.onConfig({ ...p.config, depthWeight: Number(value) })
+            }
+          />
+          <Choice
+            id="budget"
+            label="ROUND BUDGET"
+            value={String(p.config.maxIterations)}
+            options={[250, 500, 1000, 2500, 10000].map((v) => ({
+              value: String(v),
+              label: String(v),
+            }))}
+            onChange={(value) =>
+              p.onConfig({ ...p.config, maxIterations: Number(value) })
+            }
+          />
+          <label className="oracle-switch" htmlFor="oracle-enabled">
             <Checkbox
-              checked={p.config.penalty > 0}
-              onCheckedChange={(checked) =>
-                p.onConfig({ ...p.config, penalty: checked ? 0.01 : 0 })
+              id="oracle-enabled"
+              checked={p.config.oracle}
+              onCheckedChange={(oracle) =>
+                p.onConfig({ ...p.config, oracle: Boolean(oracle) })
               }
-              aria-label="Penalize gate count"
-            />
-            λ = 0.01 <span>{p.config.penalty ? 'ON' : 'OFF'}</span>
+            />{' '}
+            SAMPLED ORACLE
           </label>
         </div>
-      </section>
+        <p className="micro-note">
+          Complexity = gates + β × depth. β also breaks accuracy ties for
+          acceptance. Linear settings apply to context policies; α controls
+          LinUCB optimism and Linear TS sampling scale.
+        </p>
+      </details>
       {p.target === 'custom' && (
         <form
           className="expression-form"
@@ -130,11 +242,20 @@ export function ControlPanel(p: Props) {
           <button
             className="action primary"
             onClick={() => p.onRunning(!p.running)}
+            disabled={p.iteration >= p.config.maxIterations}
           >
             {p.running ? <Pause size={15} /> : <Play size={15} />}{' '}
-            {p.running ? 'PAUSE' : 'START'}
+            {p.iteration >= p.config.maxIterations
+              ? 'COMPLETE'
+              : p.running
+                ? 'PAUSE'
+                : 'START'}
           </button>
-          <button className="action" onClick={p.onStep} disabled={p.running}>
+          <button
+            className="action"
+            onClick={p.onStep}
+            disabled={p.running || p.iteration >= p.config.maxIterations}
+          >
             <StepForward size={16} /> STEP
           </button>
           <button className="action reset-button" onClick={p.onReset}>
@@ -153,7 +274,9 @@ export function ControlPanel(p: Props) {
           ]}
           onChange={p.onSpeed}
         />
-        {p.config.algorithm === 'epsilon-greedy' && (
+        {['epsilon-greedy', 'contextual-epsilon'].includes(
+          p.config.algorithm,
+        ) && (
           <Choice
             id="epsilon"
             label="EPSILON"
@@ -168,13 +291,13 @@ export function ControlPanel(p: Props) {
           />
         )}
         <div className="iteration">
-          <span>ITERATION</span>
+          <span>ITERATION / {p.config.maxIterations}</span>
           <strong>{String(p.iteration).padStart(6, '0')}</strong>
         </div>
       </div>
       <p className="settings-note">
-        Target, strategy, seed and penalty changes restart the experiment. Speed
-        changes preserve it.
+        Every selected candidate trains the policy, including rejected
+        mutations. Speed changes preserve the run.
       </p>
     </>
   );

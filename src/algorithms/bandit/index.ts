@@ -21,6 +21,8 @@ export function selectArm(
       return ucb1(stats, available, rng);
     case 'thompson':
       return thompsonSampling(stats, available, rng);
+    default:
+      throw new Error('Use createPolicy for a contextual or random policy.');
   }
 }
 /** Fixed affine map shared by algorithms; never clip negative mutation outcomes. */

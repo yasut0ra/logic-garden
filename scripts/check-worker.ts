@@ -9,7 +9,7 @@ import { Worker } from 'node:worker_threads';
 import { DEFAULT_CONFIG } from '../src/simulation/simulator';
 import { targetObservations } from '../src/circuit/booleanFunctions';
 import { runTrial, type TrialResult } from '../src/simulation/research';
-import { ALGORITHMS } from '../src/algorithms/bandit';
+import { researchVariants } from '../src/simulation/research';
 
 const directory = resolve('dist/client/_next/static/workers');
 const file = (await readdir(directory)).find((name) =>
@@ -31,7 +31,8 @@ const worker = new Worker(
 const request = {
   config: DEFAULT_CONFIG,
   observations: targetObservations('xor-and', 42, ''),
-  trials: 5,
+  comparison: 'algorithms' as const,
+  trials: 10,
   rounds: 250,
 };
 try {
@@ -40,7 +41,7 @@ try {
       rejectedInvalid = false;
     const timeout = setTimeout(
       () => reject(new Error('Worker timed out.')),
-      15000,
+      60000,
     );
     worker.on('error', (error) => {
       clearTimeout(timeout);
@@ -67,14 +68,17 @@ try {
             progress++;
             assert.equal(message.completed, progress);
             assert.equal(message.results.length, progress);
-            assert.equal(message.total, 15);
+            assert.equal(message.total, 40);
           } else if (message.type === 'complete') {
-            assert.equal(progress, 15);
+            assert.equal(progress, 40);
             assert.ok(rejectedInvalid);
             const expected: TrialResult[] = [];
-            for (let trial = 0; trial < 5; trial++)
-              for (const algorithm of ALGORITHMS)
-                expected.push(runTrial(request, algorithm, trial));
+            for (let trial = 0; trial < request.trials; trial++)
+              for (const variant of researchVariants(
+                request.config,
+                request.comparison,
+              ))
+                expected.push(runTrial(request, variant, trial));
             assert.deepEqual(message.results, expected);
             clearTimeout(timeout);
             resolvePromise();
@@ -87,7 +91,7 @@ try {
     );
   });
   console.log(
-    'Built Worker verified: invalid budget rejected, 15 progress updates, all results match the engine.',
+    'Built Worker verified: invalid budget rejected, 40 progress updates, all results match the engine.',
   );
 } finally {
   await worker.terminate();

@@ -1,6 +1,6 @@
 {
   "name": "logic-garden",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -57,6 +57,6 @@
     "wrangler": "4.129.1"
   },
   "type": "module",
-  "description": "Watch a multi-armed bandit grow a Boolean circuit.",
+  "description": "A contextual bandit learns which mutation to apply to a Boolean circuit.",
   "license": "MIT"
 }

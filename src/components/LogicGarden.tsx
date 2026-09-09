@@ -14,7 +14,8 @@ import {
 } from '../simulation/simulator';
 import { ControlPanel, type Speed } from './ControlPanel';
 import { CircuitCanvas } from './CircuitCanvas';
-import { BanditPanel } from './BanditPanel';
+import { ActionScorePanel } from './ActionScorePanel';
+import { ContextInspector } from './ContextInspector';
 import { MetricsPanel } from './MetricsPanel';
 import { HistoryChart } from './HistoryChart';
 import { MutationLog } from './MutationLog';
@@ -80,6 +81,7 @@ export default function LogicGarden() {
       try {
         const result = engine.advance(count);
         setSnapshot(result);
+        if (result.complete) setRunning(false);
         return result;
       } catch (caught) {
         setRunning(false);
@@ -195,9 +197,9 @@ export default function LogicGarden() {
         </div>
         <div>
           <h1>
-            LOGIC GARDEN<span className="version"> / 001</span>
+            LOGIC GARDEN<span className="version"> / 002</span>
           </h1>
-          <p>ADAPTIVE CIRCUIT LABORATORY</p>
+          <p>CONTEXTUAL CIRCUIT SEARCH</p>
         </div>
         <span className="header-note">
           THREE INPUTS. ONE UNKNOWN.
@@ -222,7 +224,10 @@ export default function LogicGarden() {
               <FlaskConical size={15} /> RESEARCH MODE
             </TabsTrigger>
           </TabsList>
-          <span>Watch a multi-armed bandit grow a Boolean circuit.</span>
+          <span>
+            Circuit state → context → action → candidate → reward → online
+            update.
+          </span>
         </div>
         <TabsContent value="live">
           <ControlPanel
@@ -233,6 +238,13 @@ export default function LogicGarden() {
             running={running}
             speed={speed}
             iteration={snapshot.iteration}
+            onPreset={(nextTarget, alpha) =>
+              reset(
+                { ...config, algorithm: 'linucb', alpha },
+                nextTarget,
+                custom,
+              )
+            }
             onConfig={(next) => reset(next, target, custom)}
             onTarget={(next, expression = custom) =>
               reset(config, next, expression)
@@ -249,17 +261,19 @@ export default function LogicGarden() {
           )}
           <section className="workspace">
             <CircuitCanvas
+              key={`${experimentId}:${snapshot.iteration}`}
               snapshot={snapshot}
               inputIndex={inputIndex}
               running={running}
             />
-            <BanditPanel
-              key={experimentId}
-              snapshot={snapshot}
-              algorithm={config.algorithm}
-            />
+            <ContextInspector key={experimentId} snapshot={snapshot} />
           </section>
           <MetricsPanel snapshot={snapshot} />
+          <ActionScorePanel
+            key={`actions-${experimentId}`}
+            snapshot={snapshot}
+            algorithm={config.algorithm}
+          />
           <HistoryChart history={snapshot.history} />
           <div className="lower-grid">
             <MutationLog logs={snapshot.logs} />
@@ -297,8 +311,8 @@ export default function LogicGarden() {
             targetLabel={targetLabel}
           />
           <p className="research-settings-hint">
-            Use Live Experiment to change the target, seed, epsilon or
-            complexity penalty.
+            Use Live Experiment to change the target, seed, model settings,
+            context or reward. Research always measures sampled oracle regret.
           </p>
         </TabsContent>
       </Tabs>

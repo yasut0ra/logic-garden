@@ -21,7 +21,7 @@ const CHARTS = [
     label: 'GATE COUNT',
     color: 'var(--muted-foreground)',
     min: 0,
-    max: 6,
+    max: 8,
   },
 ] as const;
 export function HistoryChart({ history }: { history: HistoryPoint[] }) {
@@ -35,7 +35,9 @@ export function HistoryChart({ history }: { history: HistoryPoint[] }) {
       </div>
       <div className="history-grid">
         {CHARTS.map((chart) => {
-          const values = history.map((point) => point[chart.key]);
+          const values = history
+            .map((point) => point[chart.key])
+            .filter((v): v is number => v !== null);
           const min = Math.min(chart.min, ...values),
             max = Math.max(chart.max, ...values),
             range = max - min || 1;
@@ -52,9 +54,11 @@ export function HistoryChart({ history }: { history: HistoryPoint[] }) {
               <div>
                 <span>{chart.label}</span>
                 <b style={{ color: chart.color }}>
-                  {chart.key === 'accuracy'
-                    ? `${(final * 100).toFixed(1)}%`
-                    : final.toFixed(chart.key === 'size' ? 0 : 3)}
+                  {!values.length
+                    ? 'not measured'
+                    : chart.key === 'accuracy'
+                      ? `${(final * 100).toFixed(1)}%`
+                      : final.toFixed(chart.key === 'size' ? 0 : 3)}
                 </b>
               </div>
               <svg
@@ -74,6 +78,7 @@ export function HistoryChart({ history }: { history: HistoryPoint[] }) {
                   vectorEffect="non-scaling-stroke"
                 />
                 <circle
+                  opacity={values.length ? 1 : 0}
                   cx={values.length > 1 ? 278 : 2}
                   cy={y(final)}
                   r="2.5"

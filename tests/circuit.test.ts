@@ -149,8 +149,8 @@ void test('hundreds of reachable mutation sets preserve all circuit invariants',
           null,
           mutation.description,
         );
-        assert.ok(gateCount(mutation.circuit) <= 6);
-        assert.ok(circuitDepth(mutation.circuit) <= 3);
+        assert.ok(gateCount(mutation.circuit) <= 8);
+        assert.ok(circuitDepth(mutation.circuit) <= 5);
         assert.deepEqual(pruneCircuit(mutation.circuit), mutation.circuit);
         assert.notDeepEqual(mutation.circuit, circuit);
         assert.equal(mutation.type, arm);
@@ -172,4 +172,17 @@ void test('mutation generation leaves its source untouched', () => {
   Object.freeze(circuit);
   generateMutations(circuit);
   assert.deepEqual(circuit, before);
+});
+
+void test('OR, three-bit parity and multiplexer presets match all eight observations', () => {
+  for (const id of ['or', 'parity', 'multiplexer'] as const) {
+    const observations = targetObservations(id, 42, '');
+    for (const row of observations) {
+      const [a, b, c] = row.input;
+      assert.equal(
+        row.expected,
+        id === 'or' ? a | b : id === 'parity' ? a ^ b ^ c : c ? b : a,
+      );
+    }
+  }
 });

@@ -1,5 +1,7 @@
 /* oxlint-disable jsx-a11y/prefer-tag-over-role -- Inline SVG diagrams need an explicit accessible image role. */
+import { useEffect, useState } from 'react';
 import {
+  circuitDepth,
   circuitExpression,
   nodeDepths,
   type CircuitNode,
@@ -43,20 +45,27 @@ export function CircuitCanvas({
   inputIndex: number;
   running: boolean;
 }) {
-  const depths = nodeDepths(s.circuit),
-    signals = evaluateSignals(s.circuit, ALL_INPUTS[inputIndex]!);
+  const [preview, setPreview] = useState(Boolean(s.last));
+  useEffect(() => {
+    const timer = window.setTimeout(() => setPreview(false), 380);
+    return () => window.clearTimeout(timer);
+  }, []);
+  const circuit = preview && s.candidate ? s.candidate : s.circuit;
+  const depths = nodeDepths(circuit),
+    signals = evaluateSignals(circuit, ALL_INPUTS[inputIndex]!);
+  const width = Math.max(900, (circuitDepth(circuit) + 1) * 150 + 190);
   const positions: Record<string, { x: number; y: number }> = {};
-  const columns = s.depth + 1;
-  for (const node of s.circuit.nodes) {
-    const layer = s.circuit.nodes.filter(
+  const columns = circuitDepth(circuit) + 1;
+  for (const node of circuit.nodes) {
+    const layer = circuit.nodes.filter(
       (n) => n.type !== 'OUTPUT' && depths[n.id] === depths[node.id],
     );
     const index = layer.findIndex((n) => n.id === node.id);
     positions[node.id] =
       node.type === 'OUTPUT'
-        ? { x: 806, y: 205 }
+        ? { x: width - 94, y: 205 }
         : {
-            x: 94 + (depths[node.id]! * 650) / columns,
+            x: 94 + (depths[node.id]! * (width - 250)) / columns,
             y: 60 + ((index + 1) * 290) / (layer.length + 1),
           };
   }
@@ -69,7 +78,15 @@ export function CircuitCanvas({
         </h2>
         <span className={`status ${running ? 'running' : ''}`}>
           <i />
-          {running ? 'GROWING' : s.iteration ? 'PAUSED' : 'READY TO GROW'}
+          {preview
+            ? 'CANDIDATE PREVIEW'
+            : s.complete
+              ? 'BUDGET COMPLETE'
+              : running
+                ? 'GROWING'
+                : s.iteration
+                  ? 'PAUSED'
+                  : 'READY TO GROW'}
         </span>
       </div>
       <div className={`circuit-stage ${running ? 'is-running' : ''}`}>
@@ -81,14 +98,38 @@ export function CircuitCanvas({
         </div>
         <svg
           className="circuit-svg"
-          viewBox="0 0 900 405"
+          viewBox={`0 0 ${width} 405`}
           role="img"
-          aria-label={`Current circuit: ${circuitExpression(s.circuit)}. Input ${ALL_INPUTS[inputIndex]!.join('')}, output ${signals.Y}.`}
+          aria-label={`${preview ? 'Candidate' : 'Current'} circuit: ${circuitExpression(circuit)}. Input ${ALL_INPUTS[inputIndex]!.join('')}, output ${signals.Y}.`}
         >
-          {s.circuit.edges.map((edge) => {
+          {preview &&
+            s.beforeCircuit?.edges
+              .filter(
+                (edge) =>
+                  positions[edge.source] &&
+                  positions[edge.target] &&
+                  !circuit.edges.some(
+                    (next) =>
+                      next.source === edge.source &&
+                      next.target === edge.target &&
+                      next.port === edge.port,
+                  ),
+              )
+              .map((edge) => {
+                const a = positions[edge.source]!,
+                  b = positions[edge.target]!;
+                return (
+                  <path
+                    key={`old-${edge.source}-${edge.target}-${edge.port}`}
+                    className="removed-wire"
+                    d={`M${a.x + 48} ${a.y} H${(a.x + b.x) / 2} V${b.y} H${b.x - 48}`}
+                  />
+                );
+              })}
+          {circuit.edges.map((edge) => {
             const source = positions[edge.source]!,
               target = positions[edge.target]!;
-            const node = s.circuit.nodes.find((n) => n.id === edge.target)!;
+            const node = circuit.nodes.find((n) => n.id === edge.target)!;
             const startX = source.x + (depths[edge.source] === 0 ? 20 : 48),
               endX = target.x - (edge.target === 'Y' ? 25 : 48);
             const endY =
@@ -101,7 +142,7 @@ export function CircuitCanvas({
             return (
               <g
                 key={`${edge.source}-${edge.target}-${edge.port}`}
-                className={`signal-wire ${active ? 'high' : 'low'}`}
+                className={`signal-wire ${active ? 'high' : 'low'} ${preview && s.beforeCircuit && !s.beforeCircuit.edges.some((old) => old.source === edge.source && old.target === edge.target && old.port === edge.port) ? 'new-wire' : ''}`}
               >
                 <path
                   d={d}
@@ -120,12 +161,12 @@ export function CircuitCanvas({
               </g>
             );
           })}
-          {s.circuit.nodes.map((node) => {
+          {circuit.nodes.map((node) => {
             const p = positions[node.id]!,
               terminal = node.type === 'INPUT' || node.type === 'OUTPUT';
             const used =
               node.type === 'OUTPUT' ||
-              s.circuit.edges.some((e) => e.source === node.id);
+              circuit.edges.some((e) => e.source === node.id);
             const changed = last?.mutation.targetNode === node.id;
             return (
               <g
@@ -133,9 +174,7 @@ export function CircuitCanvas({
                 transform={`translate(${p.x} ${p.y})`}
                 className={`circuit-node ${signals[node.id] ? 'high' : 'low'} ${!used ? 'unused' : ''}`}
               >
-                <title>
-                  {node.id}: {node.type}, signal {signals[node.id]}
-                </title>
+                <title>{`${node.id}: ${node.type}, signal ${signals[node.id]}`}</title>
                 {changed && (
                   <circle
                     key={last.iteration}
@@ -204,8 +243,8 @@ export function CircuitCanvas({
       </div>
       <div className="circuit-expression">
         <span>gθ(x) =</span>
-        <code title={circuitExpression(s.circuit)}>
-          {circuitExpression(s.circuit)}
+        <code title={circuitExpression(circuit)}>
+          {circuitExpression(circuit)}
         </code>
       </div>
       <div
@@ -222,7 +261,7 @@ export function CircuitCanvas({
           </p>
           <span>
             {last
-              ? `ROUND ${String(last.iteration).padStart(5, '0')} / ${last.accepted ? (last.reward > 0 ? 'ACCEPTED · IMPROVEMENT' : 'ACCEPTED · NEUTRAL MOVE') : 'REJECTED · CIRCUIT RETAINED'}`
+              ? `ROUND ${String(last.iteration).padStart(5, '0')} / ${last.accepted ? (last.after > last.before ? 'ACCEPTED · ACCURACY IMPROVED' : 'ACCEPTED · SMALLER COMPLEXITY') : preview ? 'REJECTED · PREVIEW, THEN REVERT' : 'REJECTED · CIRCUIT RETAINED'}`
               : 'PRESS START TO BEGIN EXPLORATION'}
           </span>
         </div>

@@ -1,39 +1,37 @@
-# Implementation review
+# Implementation review · contextual search
 
-## Algorithms and reward
+## Algorithm boundaries
 
-- The bandit chooses a mutation category before the concrete candidate is sampled. Candidates cannot query target accuracy.
-- Invalid and unavailable mutations do not receive fabricated rewards. Categories with no legal candidates are masked.
-- All evaluated proposals update statistics; acceptance is a separate decision.
-- The fixed affine normalization handles negative raw rewards for all three algorithms consistently.
-- Thompson Sampling uses seeded Beta draws and a documented Bernoulli resampling update, with separate RNG streams.
-- Neutral acceptance permits plateau traversal. Greedy acceptance can still stop at a local optimum. The benchmark exposes this instead of guaranteeing success.
-- Best-seen pseudo regret is explicitly defined. Because accepted accuracy is monotone for the supplied settings, zero regret is expected and is not a convergence criterion.
+- `BanditPolicy` observes only the pre-selection context and available action mask. Target expressions and oracle alternatives stay outside it.
+- Selected candidates update the selected model even when rejected. Tests independently replay selected ridge updates from stored contexts and rewards.
+- LinUCB separates mean, uncertainty and bonus. Linear Thompson samples the documented covariance via a transposed triangular solve.
+- Rank-one Cholesky updates avoid explicit inversion; tests compare an analytic 2×2 inverse, reconstruct the Gram matrix, exercise repeated 35D collinear inputs, and verify empirical Gaussian covariance.
+- Context profiles are ordered, normalized and fixed-dimensional (12/18/35). Recent statistics use only the last 32 selected observations; no counterfactual reward reaches features or best accuracy.
+- Acceptance prioritizes accuracy and then smaller gates + β × depth. Neutral plateaus are rejected; local optima are visible in the committed benchmark.
+- All reward modes train on actual candidate reward. Absolute-quality reward and acceptance can disagree intentionally.
+- Oracle evaluation includes the exact selected candidate and one sampled candidate per other available category. ON/OFF trajectory equality is tested. Regret is a sampled opportunity gap, not exhaustive or theoretical oracle regret.
 
-## Representation and reproducibility
+## Reproducibility and experiments
 
-- Topological storage and validation enforce DAG invariants, gate arity, output structure, six-gate size and three-gate depth.
-- Edges are derived from node input slots; disconnected logic is pruned.
-- All eight inputs are evaluated deterministically. The target AST stays behind an observation interface.
-- Same configuration and seed reproduce the full trajectory, including when rounds are batched.
-- Research uses paired seeds, a fixed truth table and the exact live simulation engine. Results include censored unsolved trials and sample SD.
+- Gate arities, topological order, eight-gate and five-depth limits are validated across reachable mutations. The target is a fixed eight-row observation table.
+- All seven policies reproduce full snapshots across reset and batching. Exact round budgets stop further learning.
+- Research uses the live engine, paired seeds, fixed observations, forced oracle evaluation and explicit algorithm/reward/context variants.
+- Results include final/best accuracy, solved-only median, censoring, sample SD, reward/regret, size/depth, accepted count and action distributions.
+- Reward modes have different units; the UI and README advise comparing accuracy, success and complexity across them. Regret follows each policy's own evolving trajectory.
 
-## UI and performance
+## UI and runtime
 
-- Circuit paths and gate symbols come from the current circuit; all metrics and logs come from real engine snapshots.
-- UCB score components use the same pre-update snapshot, avoiding a misleading sum of a new mean and an old bonus.
-- Setting changes reset state and cancel stale research workers. Invalid expressions do not overwrite the active experiment.
-- The truth-table probe pauses animation without changing the evaluation population.
-- Long logs are keyboard-scrollable. Forms have labels, controls use accessible primitives, and animation respects reduced-motion settings.
-- Candidate sets are cached across rejections. UI history is bounded to 240 samples and 80 log records; aggregate statistics remain cumulative.
-- Research runs in a Worker with termination-based cancellation. MAX live speed uses small batches. Live execution pauses while the page is hidden.
-- A dependency audit found issues in the original scaffold. Compatible patched versions were installed, preserving the lockfile and architecture.
+- Current circuit, proposed candidate, decision context and current context are distinct snapshots. Predictions are pre-update; displayed coefficients and pull counts are post-update.
+- Rejected candidates briefly appear and then revert. Accepted structures remain; rewired connections have functional transitions. Reduced-motion CSS suppresses animation.
+- Setting changes reset simulation and terminate stale research workers. Invalid seed/expression input preserves the active experiment. Budget completion disables START/STEP.
+- The truth-table probe does not change the evaluation population. Logs are keyboard-scrollable, controls use labeled accessible primitives, and detailed vectors are expandable.
+- Candidate sets are cached across rejections; history is bounded to 240 samples and 80 logs. Workers support cancellation; backgrounding pauses live execution.
+- Existing runtime, lockfile and vendored UI components are retained. No dependency was added for the new models.
 
-## Verification
+## Verification scope
 
-- 19 deterministic unit/property/integration tests cover truth tables, parser errors, DAG constraints across reachable mutation sets, bandit selection and posterior sampling, reward accounting, reproducibility, research pairing and aggregation.
-- TypeScript, authored-source lint and the production build are checked.
-- The built research Worker is exercised through a Node worker_threads adapter: error handling, all 15 progress events and final results are compared against the same engine.
-- The exact local route is checked for a successful HTTP response. Browser clicking, responsive screenshot inspection and real-browser WebMCP registration have not been verified. The optional WebMCP adapter is not required to use the app.
+Run `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`, then `npm run test:worker`.
 
-The vendored UI catalog is retained without unrelated rewrites and is excluded from authored-source lint. The two SVG role suppressions preserve accessible inline graphics, and the log tabindex suppression preserves keyboard scrolling.
+The exact emitted Worker bundle is loaded through a Node `worker_threads` Web Worker adapter. It rejects invalid budgets, reports 40 completed-trial progress messages for the four-policy comparison, and matches source-engine results. The reference benchmark is generated directly from the engine.
+
+HTTP checks verify local route delivery. Browser clicking, responsive screenshots, actual-browser Worker lifecycle and optional WebMCP registration are not covered by these checks. No fabricated screenshot or demo result is included.

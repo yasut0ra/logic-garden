@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { Random } from '../src/random';
 import { ARMS } from '../src/circuit/mutations';
 import {
-  ALGORITHMS,
+  LEGACY_ALGORITHMS,
   freshStats,
   normalizeReward,
   selectArm,
@@ -14,7 +14,7 @@ import { ucb1 } from '../src/algorithms/bandit/ucb1';
 import { thompsonSampling } from '../src/algorithms/bandit/thompsonSampling';
 void test('reward normalization preserves signed outcomes and bounded endpoints', () => {
   for (const penalty of [0, 0.01]) {
-    const bound = 1 + 6 * penalty;
+    const bound = 1 + 8 * penalty;
     assert.equal(normalizeReward(-bound, penalty), 0);
     assert.equal(normalizeReward(bound, penalty), 1);
     assert.equal(normalizeReward(0, penalty), 0.5);
@@ -22,7 +22,7 @@ void test('reward normalization preserves signed outcomes and bounded endpoints'
   }
 });
 void test('each strategy warms up available arms and never selects an unavailable arm', () => {
-  for (const algorithm of ALGORITHMS) {
+  for (const algorithm of LEGACY_ALGORITHMS) {
     let stats = freshStats();
     const rng = new Random(13),
       posterior = new Random(15);
