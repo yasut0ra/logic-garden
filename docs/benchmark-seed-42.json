@@ -1,0 +1,233 @@
+{
+  "format": "logic-garden-research-v1",
+  "target": "(A XOR B) AND C",
+  "config": {
+    "seed": 42,
+    "algorithm": "ucb1",
+    "epsilon": 0.15,
+    "penalty": 0
+  },
+  "observations": [
+    {
+      "input": [0, 0, 0],
+      "expected": 0
+    },
+    {
+      "input": [0, 0, 1],
+      "expected": 0
+    },
+    {
+      "input": [0, 1, 0],
+      "expected": 0
+    },
+    {
+      "input": [0, 1, 1],
+      "expected": 1
+    },
+    {
+      "input": [1, 0, 0],
+      "expected": 0
+    },
+    {
+      "input": [1, 0, 1],
+      "expected": 1
+    },
+    {
+      "input": [1, 1, 0],
+      "expected": 0
+    },
+    {
+      "input": [1, 1, 1],
+      "expected": 0
+    }
+  ],
+  "trials": 5,
+  "rounds": 500,
+  "results": [
+    {
+      "algorithm": "epsilon-greedy",
+      "seed": 42,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -108.125,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "ucb1",
+      "seed": 42,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -128.125,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "thompson",
+      "seed": 42,
+      "finalAccuracy": 1,
+      "bestAccuracy": 1,
+      "solvedAt": 19,
+      "cumulativeReward": -144.625,
+      "cumulativeRegret": 0,
+      "size": 3
+    },
+    {
+      "algorithm": "epsilon-greedy",
+      "seed": 43,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -104.625,
+      "cumulativeRegret": 0,
+      "size": 1
+    },
+    {
+      "algorithm": "ucb1",
+      "seed": 43,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -131.25,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "thompson",
+      "seed": 43,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -96.5,
+      "cumulativeRegret": 0,
+      "size": 1
+    },
+    {
+      "algorithm": "epsilon-greedy",
+      "seed": 44,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -94.75,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "ucb1",
+      "seed": 44,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -126.375,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "thompson",
+      "seed": 44,
+      "finalAccuracy": 0.875,
+      "bestAccuracy": 0.875,
+      "solvedAt": null,
+      "cumulativeReward": -146.625,
+      "cumulativeRegret": 0,
+      "size": 2
+    },
+    {
+      "algorithm": "epsilon-greedy",
+      "seed": 45,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -92.75,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "ucb1",
+      "seed": 45,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -136.375,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "thompson",
+      "seed": 45,
+      "finalAccuracy": 1,
+      "bestAccuracy": 1,
+      "solvedAt": 287,
+      "cumulativeReward": -147.75,
+      "cumulativeRegret": 0,
+      "size": 4
+    },
+    {
+      "algorithm": "epsilon-greedy",
+      "seed": 46,
+      "finalAccuracy": 0.875,
+      "bestAccuracy": 0.875,
+      "solvedAt": null,
+      "cumulativeReward": -94.75,
+      "cumulativeRegret": 0,
+      "size": 2
+    },
+    {
+      "algorithm": "ucb1",
+      "seed": 46,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -126.375,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "thompson",
+      "seed": 46,
+      "finalAccuracy": 1,
+      "bestAccuracy": 1,
+      "solvedAt": 244,
+      "cumulativeReward": -122.875,
+      "cumulativeRegret": 0,
+      "size": 2
+    }
+  ],
+  "summaries": [
+    {
+      "algorithm": "epsilon-greedy",
+      "trials": 5,
+      "finalAccuracy": 0.775,
+      "standardDeviation": 0.05590169943749474,
+      "solved": 0,
+      "medianSolvedAt": null,
+      "cumulativeReward": -99,
+      "cumulativeRegret": 0,
+      "size": 0.6
+    },
+    {
+      "algorithm": "ucb1",
+      "trials": 5,
+      "finalAccuracy": 0.75,
+      "standardDeviation": 0,
+      "solved": 0,
+      "medianSolvedAt": null,
+      "cumulativeReward": -129.7,
+      "cumulativeRegret": 0,
+      "size": 0
+    },
+    {
+      "algorithm": "thompson",
+      "trials": 5,
+      "finalAccuracy": 0.925,
+      "standardDeviation": 0.11180339887498948,
+      "solved": 3,
+      "medianSolvedAt": 244,
+      "cumulativeReward": -131.675,
+      "cumulativeRegret": 0,
+      "size": 2.4
+    }
+  ]
+}
