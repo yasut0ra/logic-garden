@@ -1,11 +1,26 @@
 import { ARMS, type Arm } from '../../circuit/mutations';
 import type { Random } from '../../random';
-export const ALGORITHMS = ['epsilon-greedy', 'ucb1', 'thompson'] as const;
+export const LEGACY_ALGORITHMS = [
+  'epsilon-greedy',
+  'ucb1',
+  'thompson',
+] as const;
+export const ALGORITHMS = [
+  'linucb',
+  'linear-thompson',
+  'contextual-epsilon',
+  'random',
+  ...LEGACY_ALGORITHMS,
+] as const;
 export type Algorithm = (typeof ALGORITHMS)[number];
 export const ALGORITHM_LABELS: Record<Algorithm, string> = {
-  'epsilon-greedy': 'ε-Greedy',
+  linucb: 'LinUCB',
+  'linear-thompson': 'Linear Thompson Sampling',
+  'contextual-epsilon': 'Contextual ε-Greedy',
+  random: 'Random',
+  'epsilon-greedy': 'ε-Greedy · non-contextual',
   ucb1: 'UCB1',
-  thompson: 'Thompson Sampling',
+  thompson: 'Beta Thompson · non-contextual',
 };
 export interface ArmStats {
   count: number;
@@ -13,12 +28,15 @@ export interface ArmStats {
   normalizedTotal: number;
   alpha: number;
   beta: number;
+  coefficients?: number[];
 }
 export type BanditStats = Record<Arm, ArmStats>;
 export interface ArmScore {
   mean: number;
   bonus: number;
   score: number;
+  uncertainty?: number;
+  sampled?: number;
 }
 export interface Decision {
   arm: Arm;

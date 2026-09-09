@@ -17,8 +17,8 @@ export interface Circuit {
   nodes: CircuitNode[];
   edges: CircuitEdge[];
 }
-export const MAX_GATES = 6;
-export const MAX_DEPTH = 3;
+export const MAX_GATES = 8;
+export const MAX_DEPTH = 5;
 export const INPUT_IDS = ['A', 'B', 'C'] as const;
 export const isGate = (node: CircuitNode) =>
   node.type !== 'INPUT' && node.type !== 'OUTPUT';

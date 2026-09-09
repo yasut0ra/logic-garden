@@ -18,7 +18,10 @@ export function MutationLog({ logs }: { logs: RoundLog[] }) {
         {!logs.length ? (
           <div className="log-empty">
             <span className="green">[00000] SYSTEM READY</span>
-            <p>Oracle connected. 8 observations. 6 mutation categories.</p>
+            <p>
+              8 observations. 6 mutation categories. Waiting for context →
+              action → reward.
+            </p>
             <p>
               Waiting for the first decision<span className="cursor">_</span>
             </p>
@@ -38,8 +41,22 @@ export function MutationLog({ logs }: { logs: RoundLog[] }) {
                 </p>
                 <p className="log-detail">
                   accuracy {log.before.toFixed(3)} → {log.after.toFixed(3)}{' '}
-                  <span>r {signed(log.reward)}</span>
+                  <span>
+                    actual r {signed(log.reward)} · predicted{' '}
+                    {log.predicted === null ? '—' : signed(log.predicted)}
+                  </span>
                 </p>
+                <details className="log-context">
+                  <summary>
+                    x[{log.context.length}] → {log.mutation.type} → online
+                    update · regret{' '}
+                    {log.instantRegret?.toFixed(3) ?? 'not measured'}
+                  </summary>
+                  <code>
+                    [{log.context.map((v) => v.toFixed(3)).join(', ')}]
+                  </code>
+                  <p>{log.reason}</p>
+                </details>
               </div>
               <span
                 className={`log-result ${log.accepted ? 'green' : 'negative'}`}

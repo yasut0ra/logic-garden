@@ -2,6 +2,13 @@ import { Random } from '../random';
 import type { Bit, Input } from './circuit';
 import { observe, type Observation, type Oracle } from './evaluator';
 export const PRESETS = [
+  { id: 'or', label: 'A OR B', expression: 'A OR B' },
+  { id: 'parity', label: 'Parity(A, B, C)', expression: 'A XOR B XOR C' },
+  {
+    id: 'multiplexer',
+    label: 'Multiplexer (C selects A / B)',
+    expression: '((NOT C) AND A) OR (C AND B)',
+  },
   { id: 'xor', label: 'A XOR B', expression: 'A XOR B' },
   { id: 'and', label: 'A AND B', expression: 'A AND B' },
   { id: 'xor-and', label: '(A XOR B) AND C', expression: '(A XOR B) AND C' },

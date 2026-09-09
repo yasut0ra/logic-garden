@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
 export const metadata: Metadata = {
-  title: 'Logic Garden — Adaptive Circuit Laboratory',
+  title: 'Logic Garden — Contextual Circuit Search',
   description:
-    'Watch a multi-armed bandit grow a Boolean circuit. Explore mutation strategies, signals, and reproducible experiments.',
+    'Can a contextual bandit learn how to build a logic circuit? Inspect features, LinUCB decisions, actual rewards, and reproducible search experiments.',
 };
 export default function RootLayout({
   children,

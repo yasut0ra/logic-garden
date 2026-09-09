@@ -1,233 +1,1136 @@
 {
-  "format": "logic-garden-research-v1",
+  "format": "logic-garden-research-v2",
   "target": "(A XOR B) AND C",
   "config": {
     "seed": 42,
-    "algorithm": "ucb1",
+    "algorithm": "linucb",
     "epsilon": 0.15,
-    "penalty": 0
+    "penalty": 0.01,
+    "depthWeight": 0.5,
+    "alpha": 0.5,
+    "ridge": 1,
+    "contextMode": "full",
+    "rewardMode": "accuracy-delta",
+    "maxIterations": 500,
+    "oracle": true
   },
   "observations": [
     {
-      "input": [0, 0, 0],
+      "input": [
+        0,
+        0,
+        0
+      ],
       "expected": 0
     },
     {
-      "input": [0, 0, 1],
+      "input": [
+        0,
+        0,
+        1
+      ],
       "expected": 0
     },
     {
-      "input": [0, 1, 0],
+      "input": [
+        0,
+        1,
+        0
+      ],
       "expected": 0
     },
     {
-      "input": [0, 1, 1],
+      "input": [
+        0,
+        1,
+        1
+      ],
       "expected": 1
     },
     {
-      "input": [1, 0, 0],
+      "input": [
+        1,
+        0,
+        0
+      ],
       "expected": 0
     },
     {
-      "input": [1, 0, 1],
+      "input": [
+        1,
+        0,
+        1
+      ],
       "expected": 1
     },
     {
-      "input": [1, 1, 0],
+      "input": [
+        1,
+        1,
+        0
+      ],
       "expected": 0
     },
     {
-      "input": [1, 1, 1],
+      "input": [
+        1,
+        1,
+        1
+      ],
       "expected": 0
     }
   ],
-  "trials": 5,
+  "trials": 10,
   "rounds": 500,
+  "comparison": "algorithms",
+  "variants": [
+    {
+      "id": "random",
+      "label": "Random",
+      "config": {
+        "seed": 42,
+        "algorithm": "random",
+        "epsilon": 0.15,
+        "penalty": 0.01,
+        "depthWeight": 0.5,
+        "alpha": 0.5,
+        "ridge": 1,
+        "contextMode": "full",
+        "rewardMode": "accuracy-delta",
+        "maxIterations": 500,
+        "oracle": true
+      }
+    },
+    {
+      "id": "ucb1",
+      "label": "UCB1",
+      "config": {
+        "seed": 42,
+        "algorithm": "ucb1",
+        "epsilon": 0.15,
+        "penalty": 0.01,
+        "depthWeight": 0.5,
+        "alpha": 0.5,
+        "ridge": 1,
+        "contextMode": "full",
+        "rewardMode": "accuracy-delta",
+        "maxIterations": 500,
+        "oracle": true
+      }
+    },
+    {
+      "id": "linucb",
+      "label": "LinUCB",
+      "config": {
+        "seed": 42,
+        "algorithm": "linucb",
+        "epsilon": 0.15,
+        "penalty": 0.01,
+        "depthWeight": 0.5,
+        "alpha": 0.5,
+        "ridge": 1,
+        "contextMode": "full",
+        "rewardMode": "accuracy-delta",
+        "maxIterations": 500,
+        "oracle": true
+      }
+    },
+    {
+      "id": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "config": {
+        "seed": 42,
+        "algorithm": "linear-thompson",
+        "epsilon": 0.15,
+        "penalty": 0.01,
+        "depthWeight": 0.5,
+        "alpha": 0.5,
+        "ridge": 1,
+        "contextMode": "full",
+        "rewardMode": "accuracy-delta",
+        "maxIterations": 500,
+        "oracle": true
+      }
+    }
+  ],
   "results": [
     {
-      "algorithm": "epsilon-greedy",
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
       "seed": 42,
       "finalAccuracy": 0.75,
       "bestAccuracy": 0.75,
       "solvedAt": null,
-      "cumulativeReward": -108.125,
-      "cumulativeRegret": 0,
-      "size": 0
+      "cumulativeReward": -167,
+      "cumulativeRegret": 84.5,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 168,
+        "remove_gate": 1,
+        "rewire": 148,
+        "add_not": 182,
+        "remove_not": 0
+      }
     },
     {
+      "variant": "ucb1",
+      "label": "UCB1",
       "algorithm": "ucb1",
       "seed": 42,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -140,
+      "cumulativeRegret": 56.25,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 213,
+        "remove_gate": 1,
+        "rewire": 197,
+        "add_not": 88,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 42,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -117.5,
+      "cumulativeRegret": 33.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 277,
+        "remove_gate": 1,
+        "rewire": 210,
+        "add_not": 11,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 42,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -129.5,
+      "cumulativeRegret": 46.875,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 249,
+        "remove_gate": 1,
+        "rewire": 208,
+        "add_not": 41,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 43,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -159.375,
+      "cumulativeRegret": 76.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 4,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 182,
+        "remove_gate": 1,
+        "rewire": 166,
+        "add_not": 151,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 43,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -143.75,
+      "cumulativeRegret": 62.375,
+      "size": 0,
+      "depth": 0,
+      "accepted": 5,
+      "actions": {
+        "change_gate": 5,
+        "add_gate": 202,
+        "remove_gate": 4,
+        "rewire": 199,
+        "add_not": 90,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 43,
+      "finalAccuracy": 0.875,
+      "bestAccuracy": 0.875,
+      "solvedAt": null,
+      "cumulativeReward": -155.875,
+      "cumulativeRegret": 91.625,
+      "size": 4,
+      "depth": 3,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 52,
+        "add_gate": 288,
+        "remove_gate": 42,
+        "rewire": 100,
+        "add_not": 18,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 43,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -128.25,
+      "cumulativeRegret": 47.125,
+      "size": 0,
+      "depth": 0,
+      "accepted": 4,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 248,
+        "remove_gate": 0,
+        "rewire": 210,
+        "add_not": 40,
+        "remove_not": 1
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 44,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -162.25,
+      "cumulativeRegret": 86,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 4,
+        "add_gate": 159,
+        "remove_gate": 1,
+        "rewire": 162,
+        "add_not": 174,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 44,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -143.75,
+      "cumulativeRegret": 65.125,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 2,
+        "add_gate": 207,
+        "remove_gate": 2,
+        "rewire": 199,
+        "add_not": 90,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 44,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -122,
+      "cumulativeRegret": 43.375,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 2,
+        "add_gate": 259,
+        "remove_gate": 2,
+        "rewire": 226,
+        "add_not": 11,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 44,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -123.75,
+      "cumulativeRegret": 47.5,
+      "size": 0,
+      "depth": 0,
+      "accepted": 5,
+      "actions": {
+        "change_gate": 7,
+        "add_gate": 248,
+        "remove_gate": 5,
+        "rewire": 199,
+        "add_not": 40,
+        "remove_not": 1
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 45,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -161.875,
+      "cumulativeRegret": 80,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 183,
+        "remove_gate": 1,
+        "rewire": 162,
+        "add_not": 154,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 45,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -143.625,
+      "cumulativeRegret": 61.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 211,
+        "remove_gate": 1,
+        "rewire": 199,
+        "add_not": 89,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 45,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -120.125,
+      "cumulativeRegret": 38.25,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 289,
+        "remove_gate": 1,
+        "rewire": 199,
+        "add_not": 11,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 45,
+      "finalAccuracy": 0.875,
+      "bestAccuracy": 0.875,
+      "solvedAt": null,
+      "cumulativeReward": -141,
+      "cumulativeRegret": 88.375,
+      "size": 2,
+      "depth": 2,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 87,
+        "add_gate": 187,
+        "remove_gate": 51,
+        "rewire": 125,
+        "add_not": 50,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 46,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -167.5,
+      "cumulativeRegret": 86.125,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 150,
+        "remove_gate": 0,
+        "rewire": 162,
+        "add_not": 188,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 46,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -148.5,
+      "cumulativeRegret": 67.125,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 200,
+        "remove_gate": 0,
+        "rewire": 209,
+        "add_not": 91,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 46,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -122,
+      "cumulativeRegret": 40.625,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 207,
+        "remove_gate": 0,
+        "rewire": 282,
+        "add_not": 11,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 46,
+      "finalAccuracy": 1,
+      "bestAccuracy": 1,
+      "solvedAt": 37,
+      "cumulativeReward": -153,
+      "cumulativeRegret": 68.5,
+      "size": 2,
+      "depth": 2,
+      "accepted": 2,
+      "actions": {
+        "change_gate": 51,
+        "add_gate": 102,
+        "remove_gate": 180,
+        "rewire": 136,
+        "add_not": 31,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 47,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -168.875,
+      "cumulativeRegret": 82.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 161,
+        "remove_gate": 1,
+        "rewire": 158,
+        "add_not": 180,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 47,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -145.125,
+      "cumulativeRegret": 59,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 208,
+        "remove_gate": 1,
+        "rewire": 201,
+        "add_not": 90,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 47,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -122.875,
+      "cumulativeRegret": 36.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 1,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 269,
+        "remove_gate": 1,
+        "rewire": 219,
+        "add_not": 11,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 47,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -128.875,
+      "cumulativeRegret": 44.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 2,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 248,
+        "remove_gate": 0,
+        "rewire": 217,
+        "add_not": 35,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 48,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -162.625,
+      "cumulativeRegret": 78.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 2,
+      "actions": {
+        "change_gate": 0,
+        "add_gate": 181,
+        "remove_gate": 2,
+        "rewire": 155,
+        "add_not": 162,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 48,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -142.375,
+      "cumulativeRegret": 61,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 206,
+        "remove_gate": 1,
+        "rewire": 200,
+        "add_not": 92,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 48,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -122.875,
+      "cumulativeRegret": 41,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 219,
+        "remove_gate": 1,
+        "rewire": 266,
+        "add_not": 13,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 48,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -129.25,
+      "cumulativeRegret": 46.875,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 220,
+        "remove_gate": 2,
+        "rewire": 239,
+        "add_not": 38,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 49,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -157,
+      "cumulativeRegret": 78.125,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 9,
+        "add_gate": 164,
+        "remove_gate": 3,
+        "rewire": 175,
+        "add_not": 149,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 49,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -143.5,
+      "cumulativeRegret": 62.5,
+      "size": 0,
+      "depth": 0,
+      "accepted": 2,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 210,
+        "remove_gate": 1,
+        "rewire": 199,
+        "add_not": 89,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 49,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -125.75,
+      "cumulativeRegret": 44.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 2,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 168,
+        "remove_gate": 1,
+        "rewire": 318,
+        "add_not": 12,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 49,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -134.625,
+      "cumulativeRegret": 53.625,
+      "size": 0,
+      "depth": 0,
+      "accepted": 2,
+      "actions": {
+        "change_gate": 2,
+        "add_gate": 220,
+        "remove_gate": 1,
+        "rewire": 237,
+        "add_not": 40,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 50,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -166.5,
+      "cumulativeRegret": 81.625,
+      "size": 0,
+      "depth": 0,
+      "accepted": 2,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 164,
+        "remove_gate": 2,
+        "rewire": 167,
+        "add_not": 166,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 50,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -146.625,
+      "cumulativeRegret": 61.125,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 204,
+        "remove_gate": 1,
+        "rewire": 204,
+        "add_not": 90,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 50,
       "finalAccuracy": 0.75,
       "bestAccuracy": 0.75,
       "solvedAt": null,
       "cumulativeReward": -128.125,
-      "cumulativeRegret": 0,
-      "size": 0
+      "cumulativeRegret": 42.625,
+      "size": 0,
+      "depth": 0,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 1,
+        "add_gate": 110,
+        "remove_gate": 1,
+        "rewire": 376,
+        "add_not": 12,
+        "remove_not": 0
+      }
     },
     {
-      "algorithm": "thompson",
-      "seed": 42,
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 50,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -123.125,
+      "cumulativeRegret": 40.25,
+      "size": 0,
+      "depth": 0,
+      "accepted": 4,
+      "actions": {
+        "change_gate": 3,
+        "add_gate": 250,
+        "remove_gate": 2,
+        "rewire": 214,
+        "add_not": 31,
+        "remove_not": 0
+      }
+    },
+    {
+      "variant": "random",
+      "label": "Random",
+      "algorithm": "random",
+      "seed": 51,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -161.75,
+      "cumulativeRegret": 85.125,
+      "size": 0,
+      "depth": 0,
+      "accepted": 4,
+      "actions": {
+        "change_gate": 2,
+        "add_gate": 135,
+        "remove_gate": 1,
+        "rewire": 178,
+        "add_not": 180,
+        "remove_not": 4
+      }
+    },
+    {
+      "variant": "ucb1",
+      "label": "UCB1",
+      "algorithm": "ucb1",
+      "seed": 51,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -134.875,
+      "cumulativeRegret": 59.75,
+      "size": 0,
+      "depth": 0,
+      "accepted": 5,
+      "actions": {
+        "change_gate": 6,
+        "add_gate": 215,
+        "remove_gate": 6,
+        "rewire": 186,
+        "add_not": 86,
+        "remove_not": 1
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "algorithm": "linucb",
+      "seed": 51,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "solvedAt": null,
+      "cumulativeReward": -116,
+      "cumulativeRegret": 43,
+      "size": 0,
+      "depth": 0,
+      "accepted": 4,
+      "actions": {
+        "change_gate": 5,
+        "add_gate": 307,
+        "remove_gate": 5,
+        "rewire": 169,
+        "add_not": 13,
+        "remove_not": 1
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "algorithm": "linear-thompson",
+      "seed": 51,
       "finalAccuracy": 1,
       "bestAccuracy": 1,
-      "solvedAt": 19,
-      "cumulativeReward": -144.625,
-      "cumulativeRegret": 0,
-      "size": 3
-    },
-    {
-      "algorithm": "epsilon-greedy",
-      "seed": 43,
-      "finalAccuracy": 0.75,
-      "bestAccuracy": 0.75,
-      "solvedAt": null,
-      "cumulativeReward": -104.625,
-      "cumulativeRegret": 0,
-      "size": 1
-    },
-    {
-      "algorithm": "ucb1",
-      "seed": 43,
-      "finalAccuracy": 0.75,
-      "bestAccuracy": 0.75,
-      "solvedAt": null,
-      "cumulativeReward": -131.25,
-      "cumulativeRegret": 0,
-      "size": 0
-    },
-    {
-      "algorithm": "thompson",
-      "seed": 43,
-      "finalAccuracy": 0.75,
-      "bestAccuracy": 0.75,
-      "solvedAt": null,
-      "cumulativeReward": -96.5,
-      "cumulativeRegret": 0,
-      "size": 1
-    },
-    {
-      "algorithm": "epsilon-greedy",
-      "seed": 44,
-      "finalAccuracy": 0.75,
-      "bestAccuracy": 0.75,
-      "solvedAt": null,
-      "cumulativeReward": -94.75,
-      "cumulativeRegret": 0,
-      "size": 0
-    },
-    {
-      "algorithm": "ucb1",
-      "seed": 44,
-      "finalAccuracy": 0.75,
-      "bestAccuracy": 0.75,
-      "solvedAt": null,
-      "cumulativeReward": -126.375,
-      "cumulativeRegret": 0,
-      "size": 0
-    },
-    {
-      "algorithm": "thompson",
-      "seed": 44,
-      "finalAccuracy": 0.875,
-      "bestAccuracy": 0.875,
-      "solvedAt": null,
-      "cumulativeReward": -146.625,
-      "cumulativeRegret": 0,
-      "size": 2
-    },
-    {
-      "algorithm": "epsilon-greedy",
-      "seed": 45,
-      "finalAccuracy": 0.75,
-      "bestAccuracy": 0.75,
-      "solvedAt": null,
-      "cumulativeReward": -92.75,
-      "cumulativeRegret": 0,
-      "size": 0
-    },
-    {
-      "algorithm": "ucb1",
-      "seed": 45,
-      "finalAccuracy": 0.75,
-      "bestAccuracy": 0.75,
-      "solvedAt": null,
-      "cumulativeReward": -136.375,
-      "cumulativeRegret": 0,
-      "size": 0
-    },
-    {
-      "algorithm": "thompson",
-      "seed": 45,
-      "finalAccuracy": 1,
-      "bestAccuracy": 1,
-      "solvedAt": 287,
-      "cumulativeReward": -147.75,
-      "cumulativeRegret": 0,
-      "size": 4
-    },
-    {
-      "algorithm": "epsilon-greedy",
-      "seed": 46,
-      "finalAccuracy": 0.875,
-      "bestAccuracy": 0.875,
-      "solvedAt": null,
-      "cumulativeReward": -94.75,
-      "cumulativeRegret": 0,
-      "size": 2
-    },
-    {
-      "algorithm": "ucb1",
-      "seed": 46,
-      "finalAccuracy": 0.75,
-      "bestAccuracy": 0.75,
-      "solvedAt": null,
-      "cumulativeReward": -126.375,
-      "cumulativeRegret": 0,
-      "size": 0
-    },
-    {
-      "algorithm": "thompson",
-      "seed": 46,
-      "finalAccuracy": 1,
-      "bestAccuracy": 1,
-      "solvedAt": 244,
-      "cumulativeReward": -122.875,
-      "cumulativeRegret": 0,
-      "size": 2
+      "solvedAt": 4,
+      "cumulativeReward": -153.25,
+      "cumulativeRegret": 65.125,
+      "size": 2,
+      "depth": 2,
+      "accepted": 3,
+      "actions": {
+        "change_gate": 39,
+        "add_gate": 117,
+        "remove_gate": 193,
+        "rewire": 128,
+        "add_not": 23,
+        "remove_not": 0
+      }
     }
   ],
   "summaries": [
     {
-      "algorithm": "epsilon-greedy",
-      "trials": 5,
-      "finalAccuracy": 0.775,
-      "standardDeviation": 0.05590169943749474,
-      "solved": 0,
-      "medianSolvedAt": null,
-      "cumulativeReward": -99,
-      "cumulativeRegret": 0,
-      "size": 0.6
-    },
-    {
-      "algorithm": "ucb1",
-      "trials": 5,
+      "variant": "random",
+      "label": "Random",
+      "trials": 10,
       "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
       "standardDeviation": 0,
       "solved": 0,
+      "censored": 10,
       "medianSolvedAt": null,
-      "cumulativeReward": -129.7,
-      "cumulativeRegret": 0,
-      "size": 0
+      "cumulativeReward": -163.475,
+      "cumulativeRegret": 81.975,
+      "size": 0,
+      "depth": 0,
+      "accepted": 2.4,
+      "actions": {
+        "change_gate": 17,
+        "add_gate": 1647,
+        "remove_gate": 13,
+        "rewire": 1633,
+        "add_not": 1686,
+        "remove_not": 4
+      }
     },
     {
-      "algorithm": "thompson",
-      "trials": 5,
-      "finalAccuracy": 0.925,
-      "standardDeviation": 0.11180339887498948,
-      "solved": 3,
-      "medianSolvedAt": 244,
-      "cumulativeReward": -131.675,
-      "cumulativeRegret": 0,
-      "size": 2.4
+      "variant": "ucb1",
+      "label": "UCB1",
+      "trials": 10,
+      "finalAccuracy": 0.75,
+      "bestAccuracy": 0.75,
+      "standardDeviation": 0,
+      "solved": 0,
+      "censored": 10,
+      "medianSolvedAt": null,
+      "cumulativeReward": -143.2125,
+      "cumulativeRegret": 61.6,
+      "size": 0,
+      "depth": 0,
+      "accepted": 2.7,
+      "actions": {
+        "change_gate": 17,
+        "add_gate": 2076,
+        "remove_gate": 18,
+        "rewire": 1993,
+        "add_not": 895,
+        "remove_not": 1
+      }
+    },
+    {
+      "variant": "linucb",
+      "label": "LinUCB",
+      "trials": 10,
+      "finalAccuracy": 0.7625,
+      "bestAccuracy": 0.7625,
+      "standardDeviation": 0.039528470752104736,
+      "solved": 0,
+      "censored": 10,
+      "medianSolvedAt": null,
+      "cumulativeReward": -125.3125,
+      "cumulativeRegret": 45.575,
+      "size": 0.4,
+      "depth": 0.3,
+      "accepted": 2.4,
+      "actions": {
+        "change_gate": 63,
+        "add_gate": 2393,
+        "remove_gate": 55,
+        "rewire": 2365,
+        "add_not": 123,
+        "remove_not": 1
+      }
+    },
+    {
+      "variant": "linear-thompson",
+      "label": "Linear Thompson Sampling",
+      "trials": 10,
+      "finalAccuracy": 0.8125,
+      "bestAccuracy": 0.8125,
+      "standardDeviation": 0.10622957319984969,
+      "solved": 2,
+      "censored": 8,
+      "medianSolvedAt": 20.5,
+      "cumulativeReward": -134.4625,
+      "cumulativeRegret": 54.9,
+      "size": 0.6,
+      "depth": 0.6,
+      "accepted": 3.1,
+      "actions": {
+        "change_gate": 192,
+        "add_gate": 2089,
+        "remove_gate": 435,
+        "rewire": 1913,
+        "add_not": 369,
+        "remove_not": 2
+      }
     }
   ]
 }

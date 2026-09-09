@@ -42,17 +42,21 @@ export function MetricsPanel({ snapshot: s }: { snapshot: Snapshot }) {
       </div>
       <div className="metric">
         <span className="eyebrow">CUMULATIVE REGRET</span>
-        <strong>{s.cumulativeRegret.toFixed(3)}</strong>
-        <span className="metric-meta">best-seen pseudo regret</span>
+        <strong>{s.cumulativeRegret?.toFixed(3) ?? '—'}</strong>
+        <span className="metric-meta">
+          {s.cumulativeRegret === null
+            ? 'oracle off · not measured'
+            : 'sampled candidate comparison'}
+        </span>
       </div>
       <div className="metric structure-metric">
         <span className="eyebrow">CIRCUIT SIZE / DEPTH</span>
         <strong>
           {s.size}
-          <small>/6</small>
+          <small>/8</small>
           <span className="metric-divider">·</span>
           {s.depth}
-          <small>/3</small>
+          <small>/5</small>
         </strong>
         <span className="metric-meta">
           exploratory decisions{' '}
